@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Coaching System — Grant Semke</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #222536;
+      --border: #2e3148;
+      --accent: #6c63ff;
+      --accent2: #00c9a7;
+      --accent3: #ff6b6b;
+      --text: #e8eaf0;
+      --muted: #8b8fa8;
+      --tag-bg: #252840;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 15px;
+      line-height: 1.65;
+    }
+    a { color: var(--accent); text-decoration: none; }
+
+    /* ── LAYOUT ── */
+    .page { max-width: 960px; margin: 0 auto; padding: 60px 32px 100px; }
+
+    /* ── HERO ── */
+    .hero { margin-bottom: 72px; }
+    .hero-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .hero h1 {
+      font-size: 42px;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #e8eaf0 0%, #6c63ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      font-size: 18px;
+      color: var(--muted);
+      max-width: 640px;
+      margin-bottom: 28px;
+    }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tag {
+      background: var(--tag-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.4px;
+    }
+    .tag.hi { color: var(--accent); border-color: var(--accent); }
+    .tag.green { color: var(--accent2); border-color: var(--accent2); }
+
+    /* ── SECTION ── */
+    section { margin-bottom: 64px; }
+    .section-label {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    h2 {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: var(--text);
+    }
+    p { color: #c4c7d6; margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+
+    /* ── CARDS GRID ── */
+    .grid { display: grid; gap: 16px; }
+    .grid-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .card-icon { font-size: 24px; margin-bottom: 12px; }
+    .card h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+    .card p { font-size: 13.5px; color: var(--muted); margin: 0; }
+
+    /* ── PIPELINE ── */
+    .pipeline {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0;
+      margin: 24px 0;
+    }
+    .pipe-step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      text-align: center;
+      flex: 1;
+      min-width: 110px;
+    }
+    .pipe-step small { display: block; font-size: 11px; font-weight: 400; color: var(--muted); margin-top: 3px; }
+    .pipe-arrow {
+      color: var(--accent);
+      font-size: 18px;
+      padding: 0 6px;
+      flex-shrink: 0;
+    }
+
+    /* ── TWO-AGENT DIAGRAM ── */
+    .agent-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .agent-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .agent-box.a { border-color: var(--accent); }
+    .agent-box.b { border-color: var(--accent2); }
+    .agent-label {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .agent-box.a .agent-label { color: var(--accent); }
+    .agent-box.b .agent-label { color: var(--accent2); }
+    .agent-box h3 { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+    .agent-box ul { list-style: none; padding: 0; }
+    .agent-box ul li {
+      font-size: 13px;
+      color: var(--muted);
+      padding: 5px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .agent-box ul li:last-child { border-bottom: none; }
+    .agent-box ul li::before { content: "→ "; color: var(--accent2); font-weight: 700; }
+    .agent-box.a ul li::before { color: var(--accent); }
+
+    /* ── DIVIDER ── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 64px 0;
+    }
+
+    /* ── NUMBERS BAR ── */
+    .numbers {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 24px 0;
+    }
+    .num-item {
+      background: var(--surface);
+      padding: 20px 20px;
+      text-align: center;
+    }
+    .num-val {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .num-label { font-size: 12px; color: var(--muted); font-weight: 500; }
+
+    /* ── CODE-LIKE BLOCK ── */
+    .code-block {
+      background: #111420;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      font-family: 'Cascadia Code', 'Fira Code', 'Courier New', monospace;
+      font-size: 13px;
+      color: #a8b0cc;
+      overflow-x: auto;
+      margin: 16px 0;
+      line-height: 1.7;
+    }
+    .code-block .comment { color: #4a5070; }
+    .code-block .kw { color: var(--accent); }
+    .code-block .val { color: var(--accent2); }
+    .code-block .str { color: #f7c59f; }
+
+    /* ── SKILLS TABLE ── */
+    .skill-list { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+    .skill-row {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 18px;
+      display: grid;
+      grid-template-columns: 200px 1fr auto;
+      align-items: center;
+      gap: 16px;
+    }
+    .skill-name { font-size: 13px; font-weight: 700; color: var(--accent2); font-family: monospace; }
+    .skill-desc { font-size: 13px; color: var(--muted); }
+    .skill-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .badge-auto { background: #1a2f2a; color: var(--accent2); }
+    .badge-manual { background: #1f1f35; color: var(--accent); }
+
+    /* ── PITFALL TABLE ── */
+    .pitfall-list { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+    .pitfall-row {
+      background: var(--surface);
+      border-left: 3px solid var(--accent3);
+      border-radius: 0 10px 10px 0;
+      padding: 12px 18px;
+    }
+    .pitfall-row h4 { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+    .pitfall-row p { font-size: 12.5px; color: var(--muted); margin: 0; }
+
+    /* ── QUOTE BLOCK ── */
+    .insight {
+      border-left: 3px solid var(--accent);
+      padding: 16px 20px;
+      background: var(--surface2);
+      border-radius: 0 10px 10px 0;
+      margin: 24px 0;
+      font-size: 14px;
+      color: #c4c7d6;
+      font-style: italic;
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      margin-top: 80px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .footer-name { font-size: 15px; font-weight: 700; }
+    .footer-detail { font-size: 13px; color: var(--muted); }
+
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 30px; }
+      .agent-split { grid-template-columns: 1fr; }
+      .skill-row { grid-template-columns: 1fr; }
+      .pipeline { flex-direction: column; align-items: stretch; }
+      .pipe-arrow { transform: rotate(90deg); text-align: center; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── HERO ── -->
+  <div class="hero">
+    <div class="hero-label">AI Systems Design Case Study</div>
+    <h1>Autonomous Fitness Coaching System</h1>
+    <p class="hero-sub">A production-grade, multi-agent AI system built to manage personalized training and nutrition at scale — with versioned state, automated pipelines, modular skills, and a self-healing error architecture.</p>
+    <div class="tag-row">
+      <span class="tag hi">Multi-Agent Architecture</span>
+      <span class="tag hi">Prompt Engineering at Scale</span>
+      <span class="tag green">Automated Pipelines</span>
+      <span class="tag green">Modular Skill System</span>
+      <span class="tag">Context Management</span>
+      <span class="tag">Self-Healing Design</span>
+      <span class="tag">Event-Driven Automation</span>
+    </div>
+  </div>
+
+  <!-- ── BY THE NUMBERS ── -->
+  <div class="numbers">
+    <div class="num-item"><div class="num-val">9</div><div class="num-label">Modular Skills Built</div></div>
+    <div class="num-item"><div class="num-val">5</div><div class="num-label">Versioned Instruction Files</div></div>
+    <div class="num-item"><div class="num-val">16</div><div class="num-label">Known Pitfalls Catalogued</div></div>
+    <div class="num-item"><div class="num-val">4</div><div class="num-label">Automated Recurring Workflows</div></div>
+    <div class="num-item"><div class="num-val">2</div><div class="num-label">Distinct AI Agents, Clear Roles</div></div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- ── SECTION 1: ARCHITECTURE ── -->
+  <section>
+    <div class="section-label">Section 01</div>
+    <h2>Two-Agent Architecture with Separation of Concerns</h2>
+    <p>The system is deliberately split across two AI agents with non-overlapping responsibilities. This isn't a UX decision — it's an architectural one. Each agent operates in the context it's best suited for, with shared state managed through a persistent file layer in Google Drive rather than through conversation memory.</p>
+    <p>This eliminates a core failure mode in most AI workflows: <strong>context drift</strong>. Because neither agent holds truth in memory, both agents always read fresh state from file. A context reset never loses data — it's already in the files.</p>
+
+    <div class="agent-split">
+      <div class="agent-box a">
+        <div class="agent-label">Agent A</div>
+        <h3>Claude Chat — Real-Time Layer</h3>
+        <ul>
+          <li>Daily nutrition tracking (mobile, on-the-go)</li>
+          <li>Live meal decisions & macro calculations</li>
+          <li>Single-card generation mid-week</li>
+          <li>Daily handoff document generation</li>
+          <li>Quick training or nutrition Q&A</li>
+        </ul>
+      </div>
+      <div class="agent-box b">
+        <div class="agent-label">Agent B</div>
+        <h3>Cowork — Batch Processing Layer</h3>
+        <ul>
+          <li>Weekly workout card generation (all 4 cards)</li>
+          <li>CSV ingestion & grooming pipeline</li>
+          <li>Body composition trend analysis</li>
+          <li>Cardio session photo processing</li>
+          <li>Project file editing & versioning</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="insight">
+      The split is driven by a real constraint: food tracking happens on mobile in real-time, while batch data processing requires desktop. Designing around actual user behavior — not ideal behavior — is what makes a system durable.
+    </div>
+  </section>
+
+  <!-- ── SECTION 2: DATA PIPELINE ── -->
+  <section>
+    <div class="section-label">Section 02</div>
+    <h2>ETL Data Pipeline for Training Intelligence</h2>
+    <p>Workout card generation isn't a single LLM call — it's a structured pipeline. Raw exports from the RepCount fitness app are ingested, filtered to the current mesocycle, compressed into a lean history file, and then consumed by the card generation skill. This keeps context lean, avoids token bloat from irrelevant history, and ensures the model reasons over clean, scoped data.</p>
+
+    <div class="pipeline">
+      <div class="pipe-step">RepCount App Export<small>Raw CSV — all history</small></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step">fitness-grooming<small>Filter + compress to current meso</small></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step">workout_history_current_meso.txt<small>Lean input file</small></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step">fitness-cards<small>Read history + flags + instructions</small></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step">4 Workout Cards + active_flags.txt<small>Written to Google Drive</small></div>
+    </div>
+
+    <p>Edge cases are explicitly handled in the pipeline spec: non-breaking spaces in CSV timestamps require UTF-8 encoding overrides; CSV export dates are validated against the current date before rotation logic is applied; multiple same-day scale readings use only the first (fasted morning) entry. These aren't afterthoughts — they're catalogued constraints the system enforces on every run.</p>
+
+    <div class="grid grid-2" style="margin-top:20px;">
+      <div class="card">
+        <div class="card-icon">🔁</div>
+        <h3>Cardio Photo Pipeline</h3>
+        <p>Polar/Fitbit session screenshots are dropped into a watched folder. The cardio skill reads the image, extracts session metrics, assesses Active Rest Day eligibility, logs to the tracking file, then deletes the source image — all in one automated pass.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📊</div>
+        <h3>Body Comp Analysis</h3>
+        <p>Smart scale CSV is parsed for 7-day rolling average weight, weekly low floor (stall detection), and Fat-Free Body Weight trend. Multiple signals are used because any single metric can mislead — the system is designed to interpret the full picture.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SECTION 3: SKILL SYSTEM ── -->
+  <section>
+    <div class="section-label">Section 03</div>
+    <h2>Modular Skill System</h2>
+    <p>Each capability in the system is packaged as a discrete, independently-triggerable skill with explicit contracts: defined inputs, defined outputs, defined trigger phrases, and defined file targets. Skills compose — the weekly workflow runs <code style="background:var(--surface2);padding:1px 6px;border-radius:4px;font-size:12px;">fitness-grooming</code> first, then <code style="background:var(--surface2);padding:1px 6px;border-radius:4px;font-size:12px;">fitness-cards</code> — but each is independently testable and replaceable.</p>
+
+    <div class="skill-list">
+      <div class="skill-row">
+        <div class="skill-name">fitness-grooming</div>
+        <div class="skill-desc">Ingests raw workout CSV, filters to current mesocycle, writes compressed history file. Run first, every Sunday.</div>
+        <div class="skill-badge badge-auto">Weekly Auto</div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-name">fitness-cards</div>
+        <div class="skill-desc">Reads history + training instructions + active flags → generates all 4 workout cards + updated flags file.</div>
+        <div class="skill-badge badge-auto">Weekly Auto</div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-name">fitness-cardio-log</div>
+        <div class="skill-desc">Reads session screenshots, extracts metrics, assesses Active Rest Day eligibility, logs, deletes source image.</div>
+        <div class="skill-badge badge-auto">Daily Auto</div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-name">fitness-audit</div>
+        <div class="skill-desc">Biweekly system health check — progression trends, flag accumulation age, body comp direction, system health.</div>
+        <div class="skill-badge badge-auto">Biweekly Auto</div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-name">fitness-meso-check</div>
+        <div class="skill-desc">On-demand mid-mesocycle audit — scores each deload trigger against real data, outputs CONTINUE / MONITOR / DELOAD.</div>
+        <div class="skill-badge badge-manual">On Demand</div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-name">fitness-end-of-meso</div>
+        <div class="skill-desc">Generates meso summary, captures reflection, writes to summaries file, archives meso history.</div>
+        <div class="skill-badge badge-manual">End of Meso</div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-name">fitness-meso-planning</div>
+        <div class="skill-desc">Post-deload readiness assessment + structured planning session for the next mesocycle.</div>
+        <div class="skill-badge badge-manual">On Demand</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SECTION 4: PROMPT ENGINEERING ── -->
+  <section>
+    <div class="section-label">Section 04</div>
+    <h2>Prompt Engineering at Scale</h2>
+    <p>The system is governed by five versioned instruction files that act as the single source of truth across all agents and sessions. Changes are surgical — a specific exercise prescription or nutrition rule is edited in one file, and every future interaction picks it up automatically. There's no re-prompting users, no chat context to maintain.</p>
+
+    <div class="code-block">
+<span class="comment"># Project file structure — each file has a defined scope and version</span>
+<br />
+<span class="kw">training_instructions</span>_v3.8.txt   <span class="comment"># Workout programming, deload criteria, exercise aliases</span>
+<span class="kw">coach_instructions</span>_v3.9.txt       <span class="comment"># Nutrition protocols, flex week scheduling</span>
+<span class="kw">food_database</span>_v2.10.txt           <span class="comment"># Macro database — always read before any food response</span>
+<span class="kw">active_flags</span>.txt                  <span class="comment"># Live watch items — regenerated every week with cards</span>
+<span class="kw">project_instructions</span>_v1.20.txt    <span class="comment"># System behavior, routing rules, agent contracts</span>
+    </div>
+
+    <p>Every file edit follows a strict protocol: read current → archive old version → write updated version. This creates a full audit trail. The system knows what it knew at any point in time.</p>
+
+    <div class="grid grid-3" style="margin-top:20px;">
+      <div class="card">
+        <div class="card-icon">🗺️</div>
+        <h3>Routing Decision Tree</h3>
+        <p>Every type of user request maps to an explicit file-read sequence. "Generate week X cards" has a different read chain than "what should I eat." No guessing about what context is needed.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔖</div>
+        <h3>Exercise Alias Mapping</h3>
+        <p>The app names exercises differently than the instruction files. A dedicated alias table reconciles them on every CSV parse — preventing silent mismatches from corrupting progression data.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <h3>Context Window Budget</h3>
+        <p>The grooming skill exists specifically to compress full CSV history into a current-meso view. This keeps token usage lean and prevents the model from reasoning over irrelevant historical data.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SECTION 5: SELF-HEALING ── -->
+  <section>
+    <div class="section-label">Section 05</div>
+    <h2>Self-Healing Error Architecture</h2>
+    <p>Most AI systems treat errors as one-time fixes. This system treats them as <strong>system-level defects</strong> that require root cause classification, correction, and permanent inoculation. Every error goes through a formal protocol before it's considered resolved.</p>
+
+    <div class="code-block">
+<span class="kw">ERROR RESOLUTION PROTOCOL</span>
+<br /><br />
+<span class="str">Step 1</span>: Clarify — what happened, what should have happened, what does "solved" look like
+<span class="str">Step 2</span>: Classify — one of <span class="val">8 error types</span> (Data Misread / Logic Error / Template Misapply /
+         Stale Assumption / Ambiguous Rule / Missing Rule / Scope Creep / Wrong Format)
+<span class="str">Step 3</span>: Fix — restate corrected output
+<span class="str">Step 4</span>: Auto-Reset — edit relevant project file directly
+<span class="str">Step 5</span>: Inoculate — add to Known Pitfalls log <span class="comment">← error cannot recur without triggering this entry</span>
+    </div>
+
+    <p>The Known Pitfalls log now has 16 entries — each one a specific, dated failure mode with an explicit prevention rule. Before every workout card generation, the system is instructed to scan this log. It's a regression test suite for prompts.</p>
+
+    <div class="pitfall-list">
+      <div class="pitfall-row">
+        <h4>Warm-up Set Misclassification</h4>
+        <p>Early-sequence sets were labeled as warm-ups based on position. Rule: check RIR. Any set ≤4 RIR is a working set, regardless of where it appears in the sequence.</p>
+      </div>
+      <div class="pitfall-row">
+        <h4>CSV Set Count Override</h4>
+        <p>Program template counts were overriding actual CSV data. Rule: CSV is ground truth. When historical sessions consistently show N sets, prescribe N sets — never defer to the template.</p>
+      </div>
+      <div class="pitfall-row">
+        <h4>Mid-Rotation Deload Declaration</h4>
+        <p>A deload status note was treated as a trigger mid-rotation. Rule: deload assessment fires ONLY after Limbs B closes a complete rotation. Any mid-rotation deload declaration is always an error.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SECTION 6: AUTOMATION ── -->
+  <section>
+    <div class="section-label">Section 06</div>
+    <h2>Event-Driven Automation & Scheduling</h2>
+    <p>The system runs on four recurring automated workflows, triggered via Google Calendar events. Each calendar event contains a copy-paste prompt in its description — so execution is consistent, repeatable, and doesn't depend on the user remembering what to do or how to phrase it.</p>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-icon">🏋️</div>
+        <h3>Weekly Check-In & Cards</h3>
+        <p>Every Sunday at 7pm ET. Runs CSV grooming, rolling average calculation, flag review, card generation for the upcoming week, and food-log archiving. One prompt, full pipeline.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📸</div>
+        <h3>Daily Cardio Log</h3>
+        <p>Every day at 9pm ET. Checks the watched folder for new cardio screenshots, processes and logs any found, assesses Active Rest Day eligibility, deletes source images.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔍</div>
+        <h3>Biweekly System Audit</h3>
+        <p>Every other Sunday. Reviews 14-day progression trends, flag accumulation patterns, body comp direction, and system health. Ends with one concrete recommendation.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🗂️</div>
+        <h3>Quarterly Archive Review</h3>
+        <p>Quarterly on the 2nd Sunday of Jan/Apr/Jul/Oct. Reviews all archive folders, advises on retention — keeping the system clean without losing historical data.</p>
+      </div>
+    </div>
+
+    <div class="insight">
+      The calendar prompt pattern means the user never has to remember workflow steps or re-derive what to say. Consistency of execution is a feature, not an expectation.
+    </div>
+  </section>
+
+  <!-- ── SECTION 7: CONTEXT MGMT ── -->
+  <section>
+    <div class="section-label">Section 07</div>
+    <h2>Context Management at Scale</h2>
+    <p>Long-running AI systems accumulate drift — the model's understanding of "current state" diverges from reality as conversations grow longer. This system solves that architecturally rather than through careful prompting.</p>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-icon">🧼</div>
+        <h3>Chat Hygiene Protocol</h3>
+        <p>Explicit rules govern when to start a new chat: new training week, new CSV, next-day food tracking, any compaction event. Each chat is stateless by design — project files carry all context, not conversation history.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📋</div>
+        <h3>Active Flags File</h3>
+        <p>A plain-text watch-item file is regenerated alongside every weekly batch of workout cards. It's read at the start of every training interaction. Live system state is always one file-read away.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📎</div>
+        <h3>Daily Handoff Protocol</h3>
+        <p>At the end of each food tracking day in Chat, a compact handoff block is generated. Downloaded as PDF → uploaded to Drive → available to Cowork for trend analysis. State persists across both agents without requiring shared memory.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚠️</div>
+        <h3>Session Length Monitoring</h3>
+        <p>After 3+ major file reads or edits in a Cowork session, the system proactively warns that context is accumulating and recommends wrapping up. Drift prevention is explicit, not passive.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SECTION 8: PM THINKING ── -->
+  <section>
+    <div class="section-label">Section 08</div>
+    <h2>Product Thinking Applied to AI Systems</h2>
+    <p>The technical architecture reflects a set of deliberate product decisions — constraints observed, tradeoffs made, and user behavior respected rather than corrected.</p>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-icon">📱</div>
+        <h3>Design Around Real Behavior</h3>
+        <p>Food tracking stays in Chat — not because it's ideal, but because tracking happens on mobile in real time. The system accommodates this constraint explicitly rather than asking the user to change their behavior.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📈</div>
+        <h3>Data Overrides Generic Advice</h3>
+        <p>Training prescriptions are derived from personal historical CSV data, not population norms. The system is explicitly instructed to use the user's own dose-response history over general bodybuilding guidelines.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔬</div>
+        <h3>Science Claim Verification</h3>
+        <p>Any physiology, nutrition science, or training science claim requires a web search and real citation before being surfaced. The system never asserts from memory on empirical questions.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌱</div>
+        <h3>Progressive Enhancement</h3>
+        <p>The system was built incrementally — core coaching first, then skills, then automation, then audit cadences. Each layer was added only when a real recurring need was demonstrated, not anticipated.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔎</div>
+        <h3>Skill Migration Detection</h3>
+        <p>During biweekly audits, the system actively scans for manual workflows that have calcified into recurring habits and flags them as automation candidates. The system improves itself over time.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🚦</div>
+        <h3>Structural Change Gate</h3>
+        <p>Before any new skill or workflow is proposed, a 3-point check runs: fits token budget? manually triggered? solves a real recurring problem? All three must pass. No speculative complexity.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <div class="footer">
+    <div>
+      <div class="footer-name">Grant Semke</div>
+      <div class="footer-detail">Product Manager · Charlotte, NC · grant.semke@gmail.com</div>
+    </div>
+    <div class="footer-detail">Built April 2026 · Anthropic Claude</div>
+  </div>
+
+</div>
+</body>
+</html>
